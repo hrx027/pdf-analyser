@@ -89,6 +89,11 @@ with st.sidebar:
     if uploaded_files:
         st.success(f"✅ {len(uploaded_files)} file(s) uploaded")
 
+    st.markdown("---")
+    st.markdown("### 📧 Contact & Feedback")
+    st.markdown("For support or feedback, please reach out:")
+    st.markdown("📩 **hrgayle27@gmail.com**")
+
 # Main Content Area
 col1, col2 = st.columns([1, 6])
 
