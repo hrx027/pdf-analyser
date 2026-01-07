@@ -69,7 +69,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # Header
-st.markdown("<h1 style='text-align: center; margin-bottom: 2rem;'>📄 PDF Intelligent Analyzer</h1>", unsafe_allow_html=True)
+st.markdown("<h1 style='text-align: center; margin-bottom: 2rem;'>📄 PDF Intelligent Analyser</h1>", unsafe_allow_html=True)
 
 # Sidebar for File Upload
 with st.sidebar:
