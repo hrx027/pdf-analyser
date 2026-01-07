@@ -11,7 +11,7 @@ groq_api_key = os.getenv("GROQ_API_KEY")
 
 # Configure page settings
 st.set_page_config(
-    page_title="PDF Intelligent Analyzer",
+    page_title="PDF Intelligent Analyser",
     page_icon="📄",
     layout="wide",
     initial_sidebar_state="expanded"
