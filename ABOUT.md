@@ -79,6 +79,23 @@ This project uses **FAISS (Facebook AI Similarity Search)** as its "Database". I
 
 ---
 
+## 📦 Dependencies Explained
+
+Here is why we chose each library in `requirements.txt`:
+
+| Dependency | Purpose | Why we used it? |
+| :--- | :--- | :--- |
+| **`streamlit`** | **Frontend UI** | It is the fastest way to build data apps in Python. It handles the web server, UI components, and reactivity without needing HTML/CSS/JS. |
+| **`langchain`** | **Orchestration Framework** | It acts as the "glue" connecting the PDF loader, the Vector DB, and the LLM. It simplifies building RAG pipelines. |
+| **`langchain-groq`** | **LLM Integration** | Specifically designed to connect LangChain with **Groq's** ultra-fast inference engine, which powers our Llama3/Mixtral models. |
+| **`langchain-huggingface`** | **Embeddings** | Allows us to use open-source embedding models (like `all-MiniLM-L6-v2`) from Hugging Face to convert text into vectors. |
+| **`faiss-cpu`** | **Vector Database** | A library by Facebook Research for efficient similarity search. We use the CPU version because it's lightweight and works everywhere (no GPU required). |
+| **`PyPDF2`** | **PDF Parser** | A pure-Python library to read PDF files. We use it to extract raw text from the uploaded documents. |
+| **`python-dotenv`** | **Security** | Loads configuration (like API keys) from a `.env` file, keeping secrets out of the code and secure. |
+| **`sentence-transformers`** | **Model Architecture** | The underlying library that powers the embedding generation. It ensures our text-to-vector conversion is accurate and semantic. |
+
+---
+
 ## 🧠 Project Architecture
 
 ```mermaid
