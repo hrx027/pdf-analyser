@@ -32,6 +32,60 @@ pdf-analyzer/
 
 ---
 
+## 🎨 Frontend Architecture (The User Interface)
+
+The frontend is built entirely in **Python** using **Streamlit**. It acts as the bridge between the user and the powerful AI backend.
+
+### 1. **Reactive UI Components**
+Streamlit runs the entire Python script from top to bottom whenever an interaction occurs.
+- **Sidebar**: Used for configuration (Theme Toggle) and data input (PDF Uploader). It keeps the main area clean.
+- **Main Area**: Displays the chat interface and results. It uses `st.columns` to create a responsive layout.
+- **Theme Toggle**: A custom logic that injects different CSS blocks based on the user's selection (Light/Dark), overriding the default Streamlit styles for a "human-made" professional look.
+
+### 2. **State Management**
+Since Streamlit re-runs the script on every click, we rely on:
+- **`st.file_uploader`**: Persists the uploaded file object across re-runs.
+- **Session State** (Implicit): While we don't explicitly use `st.session_state` for complex history yet, the app's linear flow ensures that once variables like `uploaded_files` are populated, the downstream logic (Processing) is triggered automatically.
+
+### 3. **Custom Styling**
+We don't just use default Streamlit widgets. We inject **HTML/CSS** via `st.markdown(..., unsafe_allow_html=True)` to:
+- Customize button colors and hover effects.
+- Create card-like containers for the AI response.
+- Enforce specific fonts (Inter/System fonts) for better readability.
+
+---
+
+## ⚙️ Backend Architecture (The Logic Core)
+
+The backend is "Serverless" in the sense that it runs within the same process as the frontend, but it is logically distinct. It handles the heavy lifting of RAG (Retrieval-Augmented Generation).
+
+### 1. **Data Ingestion Pipeline**
+When a file is uploaded, the backend performs a sequence of operations:
+- **Parsing**: `PyPDF2` reads the binary PDF stream and extracts raw text strings.
+- **Cleaning**: (Implicit) The extracted text is concatenated into a single corpus.
+
+### 2. **Context Awareness (RAG)**
+This is the core intelligence of the system.
+- **Chunking**: We can't feed a 100-page PDF to an AI at once (it exceeds the "context window").
+  - We split the text into **500-character chunks**.
+  - We add a **100-character overlap** between chunks so sentences aren't cut off mid-thought.
+- **Vectorization**:
+  - Each chunk is passed through the `sentence-transformers/all-MiniLM-L6-v2` model.
+  - This converts text into a **384-dimensional vector** (a list of 384 numbers).
+
+### 3. **In-Memory Database (FAISS)**
+- We use **FAISS** to index these vectors.
+- When you ask a question, your question is *also* converted into a vector.
+- FAISS performs a **Nearest Neighbor Search** to find the 3-4 chunks of text that are most mathematically similar to your question.
+
+### 4. **Inference Engine (Groq)**
+- The retrieved chunks + your question are packaged into a prompt:
+  > "Use the following context to answer the user's question: [Chunks]... Question: [User Query]"
+- This prompt is sent to **Groq's API**, which hosts the **OpenAI/Llama** model.
+- Groq processes this at lightning speed (~500 tokens/sec) and returns the natural language answer.
+
+---
+
 ## 🛣️ How "Routes" & App Flow Work
 
 Since this is a **Streamlit** Single-Page Application (SPA), it doesn't use traditional URL routes (like `/login` or `/dashboard`). Instead, the flow is **linear and reactive**:
